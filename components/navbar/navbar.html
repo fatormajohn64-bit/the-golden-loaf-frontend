@@ -1,62 +1,66 @@
+/* =========================================================
+   THE GOLDEN LOAF BAKERY
+   NAVBAR
+========================================================= */
+
 <nav class="navbar" id="main-navbar">
+
   <div class="navbar-container">
 
-    <!-- Brand -->
-    <a href="#home" class="navbar-brand" aria-label="The Golden Loaf Bakery Home">
-      <span class="navbar-brand-mark">GL</span>
-
-      <span class="navbar-brand-text">
-        <strong>The Golden Loaf</strong>
-        <small>Bakery</small>
-      </span>
+    <!-- BRAND / LOGO -->
+    <a
+      href="#home"
+      class="navbar-brand"
+      aria-label="The Golden Loaf Bakery Home"
+    >
+      <img
+        src="./assets/images/golden-loaf-logo.png"
+        alt="The Golden Loaf Bakery"
+        class="navbar-logo"
+      >
     </a>
 
-    <!-- Desktop Navigation -->
-    <div class="navbar-nav" id="navbar-nav">
-      <a href="#home" class="nav-link active" data-route="home">
-        Home
-      </a>
-
-      <a href="#shop" class="nav-link" data-route="shop">
-        Shop
-      </a>
-
-      <a href="#about" class="nav-link" data-route="about">
-        About
-      </a>
-
-      <a href="#contact" class="nav-link" data-route="contact">
-        Contact
-      </a>
-    </div>
-
-    <!-- Actions -->
-    <div class="navbar-actions">
+    <!-- MAIN NAVIGATION -->
+    <nav
+      class="navbar-nav"
+      id="navbar-nav"
+      aria-label="Main navigation"
+    >
 
       <a
-        href="#cart"
-        class="navbar-cart"
-        aria-label="Shopping cart"
+        href="#home"
+        class="nav-link active"
+        data-route="home"
       >
-        <span class="cart-icon" aria-hidden="true">🛒</span>
-        <span class="cart-count" id="cart-count">0</span>
+        HOME
       </a>
 
-      <!-- Mobile Menu Button -->
-      <button
-        type="button"
-        class="navbar-toggle"
-        id="navbar-toggle"
-        aria-label="Open navigation menu"
-        aria-expanded="false"
-        aria-controls="navbar-nav"
+      <a
+        href="#shop"
+        class="nav-link"
+        data-route="shop"
       >
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+        SHOP
+      </a>
 
-    </div>
+      <a
+        href="#about"
+        class="nav-link"
+        data-route="about"
+      >
+        ABOUT
+      </a>
+
+      <a
+        href="#contact"
+        class="nav-link"
+        data-route="contact"
+      >
+        CONTACT
+      </a>
+
+    </nav>
 
   </div>
+
 </nav>

@@ -1,11 +1,15 @@
 /* =========================================================
    THE GOLDEN LOAF BAKERY
-   APPLICATION ROUTER
+   APPLICATION CONTROLLER / ROUTER
 ========================================================= */
 
 "use strict";
 
 const App = (() => {
+
+  /* -------------------------------------------------------
+     ROUTES
+  ------------------------------------------------------- */
 
   const routes = {
     home: "./pages/home/home.html",
@@ -14,6 +18,10 @@ const App = (() => {
     contact: "./pages/contact/contact.html"
   };
 
+  /* -------------------------------------------------------
+     PAGE SCRIPTS
+  ------------------------------------------------------- */
+
   const pageScripts = {
     home: "./pages/home/home.js",
     shop: "./pages/shop/shop.js",
@@ -21,44 +29,75 @@ const App = (() => {
     contact: "./pages/contact/contact.js"
   };
 
+  /* -------------------------------------------------------
+     STATE
+  ------------------------------------------------------- */
+
   let pageContent = null;
   let navbarContainer = null;
-  let loadedScripts = new Set();
+  let footerContainer = null;
+
+  const loadedScripts = new Set();
 
   /* -------------------------------------------------------
-     INITIALIZE
+     INITIALIZE APPLICATION
   ------------------------------------------------------- */
 
   async function init() {
 
-    pageContent = document.getElementById("page-content");
-    navbarContainer = document.getElementById("navbar");
+    pageContent =
+      document.getElementById("page-content");
+
+    navbarContainer =
+      document.getElementById("navbar");
+
+    footerContainer =
+      document.getElementById("footer");
 
     if (!pageContent) {
-      console.error("App: #page-content was not found.");
+
+      console.error(
+        "App: #page-content was not found."
+      );
+
       return;
     }
 
+    /*
+     * Load shared components first.
+     */
+
     await loadNavbar();
+    await loadFooter();
+
+    /*
+     * Listen for route changes.
+     */
 
     window.addEventListener(
       "hashchange",
       handleRoute
     );
 
+    /*
+     * Load initial page.
+     */
+
     await handleRoute();
   }
 
-  /* -------------------------------------------------------
-     LOAD NAVBAR
-  ------------------------------------------------------- */
+  /* =======================================================
+     NAVBAR
+  ======================================================= */
 
   async function loadNavbar() {
 
     if (!navbarContainer) {
+
       console.warn(
         "App: #navbar container was not found."
       );
+
       return;
     }
 
@@ -72,6 +111,7 @@ const App = (() => {
       );
 
       if (!response.ok) {
+
         throw new Error(
           `Navbar request failed: ${response.status}`
         );
@@ -80,19 +120,30 @@ const App = (() => {
       navbarContainer.innerHTML =
         await response.text();
 
+      /*
+       * Load navbar CSS.
+       */
+
       await loadStylesheet(
         "./components/navbar/navbar.css"
       );
 
+      /*
+       * Load navbar JavaScript.
+       */
+
       loadScript(
         "./components/navbar/navbar.js",
         () => {
+
           if (
             typeof Navbar !== "undefined" &&
             typeof Navbar.init === "function"
           ) {
+
             Navbar.init();
           }
+
         }
       );
 
@@ -107,9 +158,81 @@ const App = (() => {
     }
   }
 
-  /* -------------------------------------------------------
-     ROUTING
-  ------------------------------------------------------- */
+  /* =======================================================
+     FOOTER
+  ======================================================= */
+
+  async function loadFooter() {
+
+    if (!footerContainer) {
+
+      console.warn(
+        "App: #footer container was not found."
+      );
+
+      return;
+    }
+
+    try {
+
+      const response = await fetch(
+        "./components/footer/footer.html",
+        {
+          cache: "no-cache"
+        }
+      );
+
+      if (!response.ok) {
+
+        throw new Error(
+          `Footer request failed: ${response.status}`
+        );
+      }
+
+      footerContainer.innerHTML =
+        await response.text();
+
+      /*
+       * Load footer CSS.
+       */
+
+      await loadStylesheet(
+        "./components/footer/footer.css"
+      );
+
+      /*
+       * Load footer JavaScript.
+       */
+
+      loadScript(
+        "./components/footer/footer.js",
+        () => {
+
+          if (
+            typeof Footer !== "undefined" &&
+            typeof Footer.init === "function"
+          ) {
+
+            Footer.init();
+          }
+
+        }
+      );
+
+    } catch (error) {
+
+      console.error(
+        "App: Failed to load footer.",
+        error
+      );
+
+      footerContainer.innerHTML = "";
+    }
+  }
+
+  /* =======================================================
+     ROUTER
+  ======================================================= */
 
   async function handleRoute() {
 
@@ -119,45 +242,64 @@ const App = (() => {
         .trim()
         .toLowerCase();
 
+    /*
+     * No hash = Home.
+     */
+
     if (!route) {
+
       route = "home";
 
-      if (
-        window.location.hash !== "#home"
-      ) {
-        history.replaceState(
-          null,
-          "",
-          "#home"
-        );
-      }
+      history.replaceState(
+        null,
+        "",
+        "#home"
+      );
     }
 
+    /*
+     * Unknown route = Home.
+     */
+
     if (!routes[route]) {
+
       route = "home";
+
+      history.replaceState(
+        null,
+        "",
+        "#home"
+      );
     }
 
     await loadPage(route);
   }
 
-  /* -------------------------------------------------------
+  /* =======================================================
      LOAD PAGE
-  ------------------------------------------------------- */
+  ======================================================= */
 
   async function loadPage(route) {
 
-    const pagePath = routes[route];
+    const pagePath =
+      routes[route];
 
     if (!pagePath) {
+
       showError(
-        "Page not found."
+        "The requested page could not be found."
       );
+
       return;
     }
 
     showLoading();
 
     try {
+
+      /*
+       * Fetch page HTML.
+       */
 
       const response = await fetch(
         pagePath,
@@ -167,19 +309,47 @@ const App = (() => {
       );
 
       if (!response.ok) {
+
         throw new Error(
           `Page request failed: ${response.status}`
         );
       }
 
+      /*
+       * Insert page HTML.
+       */
+
       pageContent.innerHTML =
         await response.text();
 
+      /*
+       * Load page-specific CSS.
+       */
+
       await loadPageStyles(route);
+
+      /*
+       * Load page-specific JavaScript.
+       */
 
       await loadPageScript(route);
 
+      /*
+       * Update navbar.
+       */
+
       updateNavbar(route);
+
+      /*
+       * Update document title.
+       */
+
+      document.title =
+        getPageTitle(route);
+
+      /*
+       * Scroll page to top.
+       */
 
       window.scrollTo({
         top: 0,
@@ -199,9 +369,9 @@ const App = (() => {
     }
   }
 
-  /* -------------------------------------------------------
-     PAGE STYLES
-  ------------------------------------------------------- */
+  /* =======================================================
+     PAGE CSS
+  ======================================================= */
 
   async function loadPageStyles(route) {
 
@@ -209,8 +379,18 @@ const App = (() => {
       `./pages/${route}/${route}.css`;
 
     try {
-      await loadStylesheet(stylesheet);
+
+      await loadStylesheet(
+        stylesheet
+      );
+
     } catch (error) {
+
+      /*
+       * CSS is optional while a page
+       * is still being built.
+       */
+
       console.warn(
         `App: No stylesheet found for ${route}.`,
         error
@@ -218,9 +398,9 @@ const App = (() => {
     }
   }
 
-  /* -------------------------------------------------------
-     PAGE SCRIPT
-  ------------------------------------------------------- */
+  /* =======================================================
+     PAGE JAVASCRIPT
+  ======================================================= */
 
   function loadPageScript(route) {
 
@@ -228,10 +408,16 @@ const App = (() => {
       pageScripts[route];
 
     if (!script) {
+
       return Promise.resolve();
     }
 
+    /*
+     * Don't load the same script twice.
+     */
+
     if (loadedScripts.has(script)) {
+
       return Promise.resolve();
     }
 
@@ -241,14 +427,18 @@ const App = (() => {
         document.createElement("script");
 
       scriptElement.src = script;
+
       scriptElement.async = false;
 
       scriptElement.onload = () => {
+
         loadedScripts.add(script);
+
         resolve();
       };
 
       scriptElement.onerror = () => {
+
         reject(
           new Error(
             `Failed to load script: ${script}`
@@ -262,13 +452,67 @@ const App = (() => {
     });
   }
 
-  /* -------------------------------------------------------
+  /* =======================================================
+     GENERIC SCRIPT LOADER
+  ======================================================= */
+
+  function loadScript(src, callback) {
+
+    const existing =
+      document.querySelector(
+        `script[src="${src}"]`
+      );
+
+    /*
+     * Already loaded.
+     */
+
+    if (existing) {
+
+      if (callback) {
+        callback();
+      }
+
+      return;
+    }
+
+    const script =
+      document.createElement("script");
+
+    script.src = src;
+
+    script.async = false;
+
+    script.onload = () => {
+
+      if (callback) {
+        callback();
+      }
+    };
+
+    script.onerror = () => {
+
+      console.error(
+        `App: Failed to load script: ${src}`
+      );
+    };
+
+    document.body.appendChild(
+      script
+    );
+  }
+
+  /* =======================================================
      STYLESHEET LOADER
-  ------------------------------------------------------- */
+  ======================================================= */
 
   function loadStylesheet(href) {
 
     return new Promise((resolve, reject) => {
+
+      /*
+       * Prevent duplicate stylesheets.
+       */
 
       const existing =
         document.querySelector(
@@ -276,7 +520,9 @@ const App = (() => {
         );
 
       if (existing) {
+
         resolve();
+
         return;
       }
 
@@ -284,11 +530,15 @@ const App = (() => {
         document.createElement("link");
 
       link.rel = "stylesheet";
+
       link.href = href;
 
-      link.onload = resolve;
+      link.onload = () => {
+        resolve();
+      };
 
       link.onerror = () => {
+
         reject(
           new Error(
             `Failed to load stylesheet: ${href}`
@@ -296,13 +546,15 @@ const App = (() => {
         );
       };
 
-      document.head.appendChild(link);
+      document.head.appendChild(
+        link
+      );
     });
   }
 
-  /* -------------------------------------------------------
-     NAVBAR UPDATE
-  ------------------------------------------------------- */
+  /* =======================================================
+     UPDATE NAVBAR
+  ======================================================= */
 
   function updateNavbar(route) {
 
@@ -310,24 +562,30 @@ const App = (() => {
       typeof Navbar !== "undefined" &&
       typeof Navbar.updateActiveLink === "function"
     ) {
+
       Navbar.updateActiveLink();
     }
-
-    document.title =
-      getPageTitle(route);
   }
 
-  /* -------------------------------------------------------
+  /* =======================================================
      PAGE TITLES
-  ------------------------------------------------------- */
+  ======================================================= */
 
   function getPageTitle(route) {
 
     const titles = {
-      home: "The Golden Loaf Bakery",
-      shop: "Shop | The Golden Loaf Bakery",
-      about: "About Us | The Golden Loaf Bakery",
-      contact: "Contact | The Golden Loaf Bakery"
+
+      home:
+        "The Golden Loaf Bakery",
+
+      shop:
+        "Shop | The Golden Loaf Bakery",
+
+      about:
+        "About Us | The Golden Loaf Bakery",
+
+      contact:
+        "Contact | The Golden Loaf Bakery"
     };
 
     return (
@@ -336,34 +594,57 @@ const App = (() => {
     );
   }
 
-  /* -------------------------------------------------------
+  /* =======================================================
      LOADING STATE
-  ------------------------------------------------------- */
+  ======================================================= */
 
   function showLoading() {
 
     pageContent.innerHTML = `
-      <div class="app-loading" aria-live="polite">
-        <div class="app-loading-mark">GL</div>
-        <span>Loading...</span>
+
+      <div
+        class="app-loading"
+        aria-live="polite"
+      >
+
+        <div class="app-loading-mark">
+          GL
+        </div>
+
+        <span>
+          Loading...
+        </span>
+
       </div>
     `;
   }
 
-  /* -------------------------------------------------------
+  /* =======================================================
      ERROR STATE
-  ------------------------------------------------------- */
+  ======================================================= */
 
   function showError(message) {
 
     pageContent.innerHTML = `
-      <section class="app-error" role="alert">
+
+      <section
+        class="app-error"
+        role="alert"
+      >
+
         <div class="app-error-card">
-          <span class="app-error-mark">GL</span>
 
-          <h1>Something went wrong</h1>
+          <span class="app-error-mark">
+            GL
+          </span>
 
-          <p>${message}</p>
+          <h1>
+            Something went wrong
+          </h1>
+
+          <p>
+            ${message}
+          </p>
 
           <button
             type="button"
@@ -371,18 +652,23 @@ const App = (() => {
           >
             Try Again
           </button>
+
         </div>
+
       </section>
     `;
   }
 
-  /* -------------------------------------------------------
+  /* =======================================================
      PUBLIC API
-  ------------------------------------------------------- */
+  ======================================================= */
 
   return {
+
     init,
+
     handleRoute
+
   };
 
 })();
@@ -393,5 +679,9 @@ const App = (() => {
 
 document.addEventListener(
   "DOMContentLoaded",
-  () => App.init()
+  () => {
+
+    App.init();
+
+  }
 );

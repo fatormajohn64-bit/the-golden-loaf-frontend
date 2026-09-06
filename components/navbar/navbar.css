@@ -1,6 +1,6 @@
 /* =========================================================
    THE GOLDEN LOAF BAKERY
-   NAVBAR — LARGE HERO HEADER
+   NAVBAR — REFERENCE MATCH
 ========================================================= */
 
 .navbar {
@@ -11,20 +11,21 @@
   right: 0;
 
   width: 100%;
-
-  height: 150px;
+  height: 155px;
 
   z-index: 1000;
 
   background:
     linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.72) 0%,
-      rgba(0, 0, 0, 0.34) 62%,
-      rgba(0, 0, 0, 0) 100%
+      rgba(0, 0, 0, 0.82) 0%,
+      rgba(0, 0, 0, 0.42) 58%,
+      transparent 100%
     );
 
   border: 0;
+
+  box-shadow: none;
 
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -32,7 +33,7 @@
 
 
 /* =========================================================
-   CONTAINER
+   NAVBAR CONTAINER
 ========================================================= */
 
 .navbar-container {
@@ -41,11 +42,11 @@
   width: 100%;
   max-width: 1500px;
 
-  height: 150px;
+  height: 155px;
 
   margin: 0 auto;
 
-  padding: 0 52px;
+  padding: 0 42px;
 
   display: flex;
   align-items: flex-start;
@@ -54,47 +55,52 @@
 
 
 /* =========================================================
-   LARGE BRAND LOGO
+   GOLDEN LOAF BRAND
 ========================================================= */
 
 .navbar-brand {
   position: relative;
 
+  width: 250px;
+  height: 155px;
+
+  flex: 0 0 250px;
+
   display: flex;
   align-items: flex-start;
   justify-content: center;
 
-  width: 245px;
-  height: 150px;
-
-  padding: 8px 14px 14px;
-
-  flex-shrink: 0;
+  padding: 5px 8px 8px;
 
   text-decoration: none;
 
   background:
     linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.78),
-      rgba(0, 0, 0, 0.32)
+      rgba(0, 0, 0, 0.88) 0%,
+      rgba(5, 4, 3, 0.58) 72%,
+      rgba(5, 4, 3, 0) 100%
     );
 
-  border-left: 1px solid
-    rgba(217, 164, 65, 0.14);
+  border-left:
+    1px solid rgba(217, 164, 65, 0.20);
 
-  border-right: 1px solid
-    rgba(217, 164, 65, 0.14);
+  border-right:
+    1px solid rgba(217, 164, 65, 0.20);
 
   overflow: visible;
 }
 
 
-.navbar-logo {
-  display: block;
+/* =========================================================
+   LOGO
+========================================================= */
 
-  width: 220px;
-  height: 135px;
+.navbar-logo {
+  width: 235px;
+  height: 150px;
+
+  display: block;
 
   object-fit: contain;
 
@@ -102,7 +108,7 @@
 
   filter:
     drop-shadow(
-      0 7px 16px rgba(0, 0, 0, 0.72)
+      0 7px 15px rgba(0, 0, 0, 0.75)
     );
 }
 
@@ -112,45 +118,47 @@
 ========================================================= */
 
 .navbar-nav {
-  display: flex;
+  height: 82px;
 
+  margin-left: auto;
+
+  display: flex;
   align-items: center;
   justify-content: flex-end;
 
-  gap: 48px;
-
-  height: 78px;
-
-  margin-left: auto;
+  gap: 50px;
 }
 
+
+/* =========================================================
+   NAV LINKS
+========================================================= */
 
 .nav-link {
   position: relative;
 
-  display: inline-flex;
-
-  align-items: center;
-  justify-content: center;
-
-  height: 78px;
+  height: 82px;
 
   padding: 0;
 
-  color: #f7f1e7;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  text-decoration: none;
+  color: #f8f2e8;
 
   font-family:
     Arial,
     Helvetica,
     sans-serif;
 
-  font-size: 14px;
+  font-size: 15px;
 
   font-weight: 500;
 
-  letter-spacing: 0.03em;
+  letter-spacing: 0.015em;
+
+  text-decoration: none;
 
   white-space: nowrap;
 
@@ -159,43 +167,8 @@
 }
 
 
-/* =========================================================
-   ACTIVE LINE
-========================================================= */
-
-.nav-link::after {
-  content: "";
-
-  position: absolute;
-
-  left: 50%;
-
-  bottom: 15px;
-
-  width: 0;
-
-  height: 2px;
-
-  transform: translateX(-50%);
-
-  background: var(--gold-light);
-
-  box-shadow:
-    0 0 9px rgba(240, 199, 106, 0.35);
-
-  transition:
-    width 220ms ease;
-}
-
-
 .nav-link:hover {
   color: var(--gold-light);
-}
-
-
-.nav-link:hover::after,
-.nav-link.active::after {
-  width: 100%;
 }
 
 
@@ -205,49 +178,107 @@
 
 
 /* =========================================================
+   ACTIVE GOLD LINE
+========================================================= */
+
+.nav-link::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+
+  bottom: 14px;
+
+  width: 0;
+
+  height: 2px;
+
+  transform:
+    translateX(-50%);
+
+  background:
+    var(--gold-light);
+
+  box-shadow:
+    0 0 10px
+    rgba(240, 199, 106, 0.38);
+
+  transition:
+    width 220ms ease;
+}
+
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+
+/* =========================================================
+   IMPORTANT
+   Hide OLD duplicate Home-page header elements.
+   The global navbar above is the only header.
+========================================================= */
+
+.home-page .home-brand,
+.home-page .home-hero-nav {
+  display: none !important;
+}
+
+
+/* =========================================================
    TABLET
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
 
   .navbar {
-    height: 125px;
+    height: 140px;
   }
 
   .navbar-container {
-    height: 125px;
+    height: 140px;
 
     padding:
       0 28px;
   }
 
+
+  /* BRAND */
+
   .navbar-brand {
-    width: 190px;
-    height: 125px;
+    width: 215px;
+    height: 140px;
+
+    flex-basis: 215px;
 
     padding:
-      7px 10px 10px;
+      5px 7px 8px;
   }
 
   .navbar-logo {
-    width: 175px;
-    height: 112px;
+    width: 205px;
+    height: 136px;
   }
 
-  .navbar-nav {
-    height: 68px;
 
-    gap: 28px;
+  /* NAV */
+
+  .navbar-nav {
+    height: 76px;
+
+    gap: 35px;
   }
 
   .nav-link {
-    height: 68px;
+    height: 76px;
 
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .nav-link::after {
-    bottom: 11px;
+    bottom: 12px;
   }
 }
 
@@ -259,86 +290,120 @@
 @media (max-width: 650px) {
 
   .navbar {
-    height: 116px;
+    height: 142px;
 
     background:
       linear-gradient(
         180deg,
-        rgba(0, 0, 0, 0.86),
-        rgba(0, 0, 0, 0.46) 72%,
-        transparent
+        rgba(0, 0, 0, 0.90) 0%,
+        rgba(0, 0, 0, 0.60) 62%,
+        rgba(0, 0, 0, 0) 100%
       );
   }
 
 
+  /* -------------------------------------------------------
+     CONTAINER
+  ------------------------------------------------------- */
+
   .navbar-container {
-    height: 116px;
+    width: 100%;
+
+    height: 142px;
 
     padding:
       0 12px;
 
-    align-items: flex-start;
+    display: block;
   }
 
 
-  /* -----------------------------------------------
-     LARGE MOBILE LOGO
-  ------------------------------------------------ */
+  /* -------------------------------------------------------
+     LARGE LOGO
+  ------------------------------------------------------- */
 
   .navbar-brand {
-    width: 145px;
-    height: 116px;
+    position: absolute;
+
+    top: 0;
+    left: 10px;
+
+    width: 205px;
+    height: 142px;
+
+    flex: none;
 
     padding:
-      5px 5px 8px;
+      3px 4px 7px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
 
     background:
       linear-gradient(
         180deg,
-        rgba(0, 0, 0, 0.76),
-        rgba(0, 0, 0, 0.18)
+        rgba(0, 0, 0, 0.91),
+        rgba(0, 0, 0, 0.48) 72%,
+        transparent
       );
+
+    border-left:
+      1px solid rgba(217, 164, 65, 0.18);
+
+    border-right:
+      1px solid rgba(217, 164, 65, 0.18);
   }
 
 
   .navbar-logo {
-    width: 137px;
-    height: 108px;
+    width: 197px;
+    height: 138px;
 
     object-fit: contain;
+
+    object-position: center top;
   }
 
 
-  /* -----------------------------------------------
-     TOP NAVIGATION
-  ------------------------------------------------ */
+  /* -------------------------------------------------------
+     NAVIGATION
+  ------------------------------------------------------- */
 
   .navbar-nav {
-    height: 62px;
+    position: absolute;
 
-    margin-left: auto;
+    top: 0;
+    right: 15px;
 
-    gap: 13px;
+    height: 76px;
+
+    margin: 0;
+
+    display: flex;
 
     align-items: center;
+    justify-content: flex-end;
+
+    gap: 20px;
   }
 
 
   .nav-link {
-    height: 62px;
+    height: 76px;
 
-    font-size: 9px;
+    font-size: 13px;
 
-    letter-spacing: 0;
+    font-weight: 500;
 
-    padding: 0;
+    letter-spacing: 0.01em;
   }
 
 
   .nav-link::after {
-    bottom: 8px;
+    bottom: 11px;
 
-    height: 1.5px;
+    height: 2px;
   }
 }
 
@@ -347,52 +412,66 @@
    SMALL PHONES
 ========================================================= */
 
-@media (max-width: 480px) {
+@media (max-width: 500px) {
 
   .navbar {
-    height: 105px;
+    height: 132px;
   }
 
 
   .navbar-container {
-    height: 105px;
+    height: 132px;
 
-    padding:
-      0 8px;
+    padding: 0 8px;
   }
 
 
+  /* -------------------------------------------------------
+     LOGO
+  ------------------------------------------------------- */
+
   .navbar-brand {
-    width: 125px;
-    height: 105px;
+    left: 7px;
+
+    width: 177px;
+    height: 132px;
 
     padding:
-      4px 3px 6px;
+      3px 3px 6px;
   }
 
 
   .navbar-logo {
-    width: 119px;
-    height: 98px;
+    width: 171px;
+    height: 128px;
   }
 
 
-  .navbar-nav {
-    height: 56px;
+  /* -------------------------------------------------------
+     NAV
+  ------------------------------------------------------- */
 
-    gap: 10px;
+  .navbar-nav {
+    top: 0;
+    right: 10px;
+
+    height: 68px;
+
+    gap: 15px;
   }
 
 
   .nav-link {
-    height: 56px;
+    height: 68px;
 
-    font-size: 8px;
+    font-size: 11px;
   }
 
 
   .nav-link::after {
-    bottom: 7px;
+    bottom: 9px;
+
+    height: 1.5px;
   }
 }
 
@@ -401,33 +480,63 @@
    VERY SMALL PHONES
 ========================================================= */
 
-@media (max-width: 360px) {
+@media (max-width: 390px) {
+
+  .navbar {
+    height: 124px;
+  }
+
 
   .navbar-container {
+    height: 124px;
+
     padding:
       0 6px;
   }
 
 
+  /* -------------------------------------------------------
+     LOGO
+  ------------------------------------------------------- */
+
   .navbar-brand {
-    width: 112px;
-    height: 98px;
+    left: 5px;
+
+    width: 155px;
+    height: 124px;
   }
 
 
   .navbar-logo {
-    width: 106px;
-    height: 92px;
+    width: 150px;
+    height: 120px;
   }
 
 
+  /* -------------------------------------------------------
+     NAV
+  ------------------------------------------------------- */
+
   .navbar-nav {
-    gap: 8px;
+    right: 7px;
+
+    height: 64px;
+
+    gap: 11px;
   }
 
 
   .nav-link {
-    font-size: 7px;
+    height: 64px;
+
+    font-size: 9px;
+
+    letter-spacing: 0;
+  }
+
+
+  .nav-link::after {
+    bottom: 8px;
   }
 }
 
@@ -439,49 +548,53 @@
 @media (min-width: 1400px) {
 
   .navbar {
-    height: 165px;
+    height: 170px;
   }
 
 
   .navbar-container {
-    height: 165px;
+    height: 170px;
 
     padding:
-      0 64px;
+      0 58px;
   }
 
 
   .navbar-brand {
-    width: 270px;
-    height: 165px;
+    width: 275px;
+    height: 170px;
+
+    flex-basis: 275px;
 
     padding:
-      9px 15px 15px;
+      6px 10px 10px;
   }
 
 
   .navbar-logo {
-    width: 245px;
-    height: 150px;
+    width: 260px;
+    height: 165px;
   }
 
 
   .navbar-nav {
-    height: 84px;
+    height: 88px;
 
-    gap: 52px;
+    gap: 56px;
   }
 
 
   .nav-link {
-    height: 84px;
+    height: 88px;
 
-    font-size: 15px;
+    font-size: 16px;
   }
 
 
   .nav-link::after {
     bottom: 16px;
+
+    height: 2px;
   }
 }
 

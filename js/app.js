@@ -40,48 +40,35 @@ const App = (() => {
   const loadedScripts = new Set();
 
   /* -------------------------------------------------------
-     INITIALIZE APPLICATION
+     INITIALIZE
   ------------------------------------------------------- */
 
   async function init() {
 
-    pageContent =
-      document.getElementById("page-content");
-
-    navbarContainer =
-      document.getElementById("navbar");
-
-    footerContainer =
-      document.getElementById("footer");
+    pageContent = document.getElementById("page-content");
+    navbarContainer = document.getElementById("navbar");
+    footerContainer = document.getElementById("footer");
 
     if (!pageContent) {
-
-      console.error(
-        "App: #page-content was not found."
-      );
-
+      console.error("App: #page-content was not found.");
       return;
     }
 
     /*
-     * Load shared components first.
+     * Shared components.
      */
 
     await loadNavbar();
     await loadFooter();
 
     /*
-     * Listen for route changes.
+     * Router.
      */
 
     window.addEventListener(
       "hashchange",
       handleRoute
     );
-
-    /*
-     * Load initial page.
-     */
 
     await handleRoute();
   }
@@ -93,11 +80,6 @@ const App = (() => {
   async function loadNavbar() {
 
     if (!navbarContainer) {
-
-      console.warn(
-        "App: #navbar container was not found."
-      );
-
       return;
     }
 
@@ -111,48 +93,40 @@ const App = (() => {
       );
 
       if (!response.ok) {
-
         throw new Error(
-          `Navbar request failed: ${response.status}`
+          `Navbar HTML failed: ${response.status}`
         );
       }
 
       navbarContainer.innerHTML =
         await response.text();
 
-      /*
-       * Load navbar CSS.
-       */
-
       await loadStylesheet(
         "./components/navbar/navbar.css"
       );
 
-      /*
-       * Load navbar JavaScript.
-       */
-
-      loadScript(
-        "./components/navbar/navbar.js",
-        () => {
-
-          if (
-            typeof Navbar !== "undefined" &&
-            typeof Navbar.init === "function"
-          ) {
-
-            Navbar.init();
-          }
-
-        }
+      await loadScript(
+        "./components/navbar/navbar.js"
       );
+
+      if (
+        typeof Navbar !== "undefined" &&
+        typeof Navbar.init === "function"
+      ) {
+        Navbar.init();
+      }
 
     } catch (error) {
 
       console.error(
-        "App: Failed to load navbar.",
+        "App: Navbar failed to load.",
         error
       );
+
+      /*
+       * Do not destroy the entire application
+       * because the navbar has a problem.
+       */
 
       navbarContainer.innerHTML = "";
     }
@@ -165,11 +139,6 @@ const App = (() => {
   async function loadFooter() {
 
     if (!footerContainer) {
-
-      console.warn(
-        "App: #footer container was not found."
-      );
-
       return;
     }
 
@@ -183,48 +152,39 @@ const App = (() => {
       );
 
       if (!response.ok) {
-
         throw new Error(
-          `Footer request failed: ${response.status}`
+          `Footer HTML failed: ${response.status}`
         );
       }
 
       footerContainer.innerHTML =
         await response.text();
 
-      /*
-       * Load footer CSS.
-       */
-
       await loadStylesheet(
         "./components/footer/footer.css"
       );
 
-      /*
-       * Load footer JavaScript.
-       */
-
-      loadScript(
-        "./components/footer/footer.js",
-        () => {
-
-          if (
-            typeof Footer !== "undefined" &&
-            typeof Footer.init === "function"
-          ) {
-
-            Footer.init();
-          }
-
-        }
+      await loadScript(
+        "./components/footer/footer.js"
       );
+
+      if (
+        typeof Footer !== "undefined" &&
+        typeof Footer.init === "function"
+      ) {
+        Footer.init();
+      }
 
     } catch (error) {
 
       console.error(
-        "App: Failed to load footer.",
+        "App: Footer failed to load.",
         error
       );
+
+      /*
+       * Footer failure should not kill the page.
+       */
 
       footerContainer.innerHTML = "";
     }
@@ -242,12 +202,7 @@ const App = (() => {
         .trim()
         .toLowerCase();
 
-    /*
-     * No hash = Home.
-     */
-
     if (!route) {
-
       route = "home";
 
       history.replaceState(
@@ -257,12 +212,7 @@ const App = (() => {
       );
     }
 
-    /*
-     * Unknown route = Home.
-     */
-
     if (!routes[route]) {
-
       route = "home";
 
       history.replaceState(
@@ -281,25 +231,17 @@ const App = (() => {
 
   async function loadPage(route) {
 
-    const pagePath =
-      routes[route];
+    const pagePath = routes[route];
 
     if (!pagePath) {
-
-      showError(
-        "The requested page could not be found."
-      );
-
       return;
     }
 
-    showLoading();
+    /*
+     * Fetch the actual page.
+     */
 
     try {
-
-      /*
-       * Fetch page HTML.
-       */
 
       const response = await fetch(
         pagePath,
@@ -311,208 +253,84 @@ const App = (() => {
       if (!response.ok) {
 
         throw new Error(
-          `Page request failed: ${response.status}`
+          `Page HTML failed: ${response.status}`
         );
       }
 
-      /*
-       * Insert page HTML.
-       */
-
-      pageContent.innerHTML =
+      const html =
         await response.text();
 
       /*
-       * Load page-specific CSS.
+       * Insert the page.
        */
 
-      await loadPageStyles(route);
+      pageContent.innerHTML = html;
 
       /*
-       * Load page-specific JavaScript.
+       * Load page CSS.
+       *
+       * CSS is optional while we are
+       * building each page.
        */
 
-      await loadPageScript(route);
+      await loadOptionalStylesheet(
+        `./pages/${route}/${route}.css`
+      );
 
       /*
-       * Update navbar.
+       * Load page JS.
+       *
+       * JS is also optional while a page
+       * is being built.
        */
 
-      updateNavbar(route);
+      await loadOptionalScript(
+        pageScripts[route]
+      );
 
       /*
-       * Update document title.
+       * Update navigation.
+       */
+
+      updateNavbar();
+
+      /*
+       * Update title.
        */
 
       document.title =
         getPageTitle(route);
 
       /*
-       * Scroll page to top.
+       * Start at top.
        */
 
       window.scrollTo({
         top: 0,
-        behavior: "instant"
+        left: 0,
+        behavior: "auto"
       });
 
     } catch (error) {
 
       console.error(
-        `App: Failed to load ${route} page.`,
+        `App: Failed to load ${route}.`,
         error
       );
 
-      showError(
-        "We couldn't load this page right now. Please try again."
+      showPageError(
+        "We couldn't load this page right now."
       );
     }
   }
 
   /* =======================================================
-     PAGE CSS
-  ======================================================= */
-
-  async function loadPageStyles(route) {
-
-    const stylesheet =
-      `./pages/${route}/${route}.css`;
-
-    try {
-
-      await loadStylesheet(
-        stylesheet
-      );
-
-    } catch (error) {
-
-      /*
-       * CSS is optional while a page
-       * is still being built.
-       */
-
-      console.warn(
-        `App: No stylesheet found for ${route}.`,
-        error
-      );
-    }
-  }
-
-  /* =======================================================
-     PAGE JAVASCRIPT
-  ======================================================= */
-
-  function loadPageScript(route) {
-
-    const script =
-      pageScripts[route];
-
-    if (!script) {
-
-      return Promise.resolve();
-    }
-
-    /*
-     * Don't load the same script twice.
-     */
-
-    if (loadedScripts.has(script)) {
-
-      return Promise.resolve();
-    }
-
-    return new Promise((resolve, reject) => {
-
-      const scriptElement =
-        document.createElement("script");
-
-      scriptElement.src = script;
-
-      scriptElement.async = false;
-
-      scriptElement.onload = () => {
-
-        loadedScripts.add(script);
-
-        resolve();
-      };
-
-      scriptElement.onerror = () => {
-
-        reject(
-          new Error(
-            `Failed to load script: ${script}`
-          )
-        );
-      };
-
-      document.body.appendChild(
-        scriptElement
-      );
-    });
-  }
-
-  /* =======================================================
-     GENERIC SCRIPT LOADER
-  ======================================================= */
-
-  function loadScript(src, callback) {
-
-    const existing =
-      document.querySelector(
-        `script[src="${src}"]`
-      );
-
-    /*
-     * Already loaded.
-     */
-
-    if (existing) {
-
-      if (callback) {
-        callback();
-      }
-
-      return;
-    }
-
-    const script =
-      document.createElement("script");
-
-    script.src = src;
-
-    script.async = false;
-
-    script.onload = () => {
-
-      if (callback) {
-        callback();
-      }
-    };
-
-    script.onerror = () => {
-
-      console.error(
-        `App: Failed to load script: ${src}`
-      );
-    };
-
-    document.body.appendChild(
-      script
-    );
-  }
-
-  /* =======================================================
-     STYLESHEET LOADER
+     REQUIRED STYLESHEET
   ======================================================= */
 
   function loadStylesheet(href) {
 
     return new Promise((resolve, reject) => {
-
-      /*
-       * Prevent duplicate stylesheets.
-       */
 
       const existing =
         document.querySelector(
@@ -520,9 +338,7 @@ const App = (() => {
         );
 
       if (existing) {
-
         resolve();
-
         return;
       }
 
@@ -530,7 +346,46 @@ const App = (() => {
         document.createElement("link");
 
       link.rel = "stylesheet";
+      link.href = href;
 
+      link.onload = () => {
+        resolve();
+      };
+
+      link.onerror = () => {
+        reject(
+          new Error(
+            `Stylesheet failed: ${href}`
+          )
+        );
+      };
+
+      document.head.appendChild(link);
+    });
+  }
+
+  /* =======================================================
+     OPTIONAL STYLESHEET
+  ======================================================= */
+
+  function loadOptionalStylesheet(href) {
+
+    return new Promise((resolve) => {
+
+      const existing =
+        document.querySelector(
+          `link[href="${href}"]`
+        );
+
+      if (existing) {
+        resolve();
+        return;
+      }
+
+      const link =
+        document.createElement("link");
+
+      link.rel = "stylesheet";
       link.href = href;
 
       link.onload = () => {
@@ -539,24 +394,142 @@ const App = (() => {
 
       link.onerror = () => {
 
-        reject(
-          new Error(
-            `Failed to load stylesheet: ${href}`
-          )
+        console.warn(
+          `App: Optional stylesheet not found: ${href}`
         );
+
+        link.remove();
+
+        resolve();
       };
 
-      document.head.appendChild(
-        link
-      );
+      document.head.appendChild(link);
     });
   }
 
   /* =======================================================
-     UPDATE NAVBAR
+     REQUIRED SCRIPT
   ======================================================= */
 
-  function updateNavbar(route) {
+  function loadScript(src) {
+
+    return new Promise((resolve, reject) => {
+
+      if (!src) {
+        resolve();
+        return;
+      }
+
+      if (loadedScripts.has(src)) {
+        resolve();
+        return;
+      }
+
+      const existing =
+        document.querySelector(
+          `script[src="${src}"]`
+        );
+
+      if (existing) {
+
+        loadedScripts.add(src);
+
+        resolve();
+
+        return;
+      }
+
+      const script =
+        document.createElement("script");
+
+      script.src = src;
+      script.async = false;
+
+      script.onload = () => {
+
+        loadedScripts.add(src);
+
+        resolve();
+      };
+
+      script.onerror = () => {
+
+        reject(
+          new Error(
+            `Script failed: ${src}`
+          )
+        );
+      };
+
+      document.body.appendChild(script);
+    });
+  }
+
+  /* =======================================================
+     OPTIONAL SCRIPT
+  ======================================================= */
+
+  function loadOptionalScript(src) {
+
+    return new Promise((resolve) => {
+
+      if (!src) {
+        resolve();
+        return;
+      }
+
+      if (loadedScripts.has(src)) {
+        resolve();
+        return;
+      }
+
+      const existing =
+        document.querySelector(
+          `script[src="${src}"]`
+        );
+
+      if (existing) {
+
+        loadedScripts.add(src);
+
+        resolve();
+
+        return;
+      }
+
+      const script =
+        document.createElement("script");
+
+      script.src = src;
+      script.async = false;
+
+      script.onload = () => {
+
+        loadedScripts.add(src);
+
+        resolve();
+      };
+
+      script.onerror = () => {
+
+        console.warn(
+          `App: Optional page script not found: ${src}`
+        );
+
+        script.remove();
+
+        resolve();
+      };
+
+      document.body.appendChild(script);
+    });
+  }
+
+  /* =======================================================
+     NAVBAR UPDATE
+  ======================================================= */
+
+  function updateNavbar() {
 
     if (
       typeof Navbar !== "undefined" &&
@@ -588,55 +561,28 @@ const App = (() => {
         "Contact | The Golden Loaf Bakery"
     };
 
-    return (
-      titles[route] ||
-      titles.home
-    );
+    return titles[route] || titles.home;
   }
 
   /* =======================================================
-     LOADING STATE
+     PAGE ERROR
   ======================================================= */
 
-  function showLoading() {
+  function showPageError(message) {
 
     pageContent.innerHTML = `
-
-      <div
-        class="app-loading"
-        aria-live="polite"
-      >
-
-        <div class="app-loading-mark">
-          GL
-        </div>
-
-        <span>
-          Loading...
-        </span>
-
-      </div>
-    `;
-  }
-
-  /* =======================================================
-     ERROR STATE
-  ======================================================= */
-
-  function showError(message) {
-
-    pageContent.innerHTML = `
-
       <section
-        class="app-error"
-        role="alert"
+        style="
+          min-height:60vh;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          padding:120px 20px;
+          text-align:center;
+        "
       >
 
-        <div class="app-error-card">
-
-          <span class="app-error-mark">
-            GL
-          </span>
+        <div>
 
           <h1>
             Something went wrong
@@ -664,11 +610,8 @@ const App = (() => {
   ======================================================= */
 
   return {
-
     init,
-
     handleRoute
-
   };
 
 })();
@@ -680,8 +623,6 @@ const App = (() => {
 document.addEventListener(
   "DOMContentLoaded",
   () => {
-
     App.init();
-
   }
 );

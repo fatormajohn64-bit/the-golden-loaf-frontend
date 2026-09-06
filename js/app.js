@@ -1,102 +1,185 @@
 /* =========================================================
    THE GOLDEN LOAF BAKERY
-   APPLICATION CONTROLLER
-   ========================================================= */
+   APPLICATION ROUTER
+========================================================= */
 
 "use strict";
 
-const App = {
+const App = (() => {
 
-  /* -------------------------------------------------------
-     STATE
-  ------------------------------------------------------- */
-
-  currentRoute: null,
-
-  routes: {
+  const routes = {
     home: "./pages/home/home.html",
     shop: "./pages/shop/shop.html",
     about: "./pages/about/about.html",
     contact: "./pages/contact/contact.html"
-  },
+  };
 
+  const pageScripts = {
+    home: "./pages/home/home.js",
+    shop: "./pages/shop/shop.js",
+    about: "./pages/about/about.js",
+    contact: "./pages/contact/contact.js"
+  };
 
-  /* -------------------------------------------------------
-     START APPLICATION
-  ------------------------------------------------------- */
-
-  async init() {
-    this.bindEvents();
-
-    await this.handleRoute();
-  },
-
-
-  /* -------------------------------------------------------
-     ROUTER EVENTS
-  ------------------------------------------------------- */
-
-  bindEvents() {
-    window.addEventListener("hashchange", () => {
-      this.handleRoute();
-    });
-  },
-
+  let pageContent = null;
+  let navbarContainer = null;
+  let loadedScripts = new Set();
 
   /* -------------------------------------------------------
-     ROUTE HANDLER
+     INITIALIZE
   ------------------------------------------------------- */
 
-  async handleRoute() {
-    const hash = window.location.hash.replace("#", "");
+  async function init() {
 
-    const route = hash || "home";
-
-    await this.loadPage(route);
-  },
-
-
-  /* -------------------------------------------------------
-     LOAD PAGE
-  ------------------------------------------------------- */
-
-  async loadPage(route) {
-
-    const pageContent = document.getElementById("page-content");
+    pageContent = document.getElementById("page-content");
+    navbarContainer = document.getElementById("navbar");
 
     if (!pageContent) {
       console.error("App: #page-content was not found.");
       return;
     }
 
-    const pagePath = this.routes[route];
+    await loadNavbar();
 
-    if (!pagePath) {
-      await this.loadPage("home");
+    window.addEventListener(
+      "hashchange",
+      handleRoute
+    );
+
+    await handleRoute();
+  }
+
+  /* -------------------------------------------------------
+     LOAD NAVBAR
+  ------------------------------------------------------- */
+
+  async function loadNavbar() {
+
+    if (!navbarContainer) {
+      console.warn(
+        "App: #navbar container was not found."
+      );
       return;
     }
 
     try {
 
-      pageContent.classList.add("page-loading");
-
-      const response = await fetch(pagePath, {
-        cache: "no-cache"
-      });
+      const response = await fetch(
+        "./components/navbar/navbar.html",
+        {
+          cache: "no-cache"
+        }
+      );
 
       if (!response.ok) {
         throw new Error(
-          `Unable to load page: ${response.status}`
+          `Navbar request failed: ${response.status}`
         );
       }
 
-      const html = await response.text();
+      navbarContainer.innerHTML =
+        await response.text();
 
-      pageContent.innerHTML = html;
+      await loadStylesheet(
+        "./components/navbar/navbar.css"
+      );
 
-      this.currentRoute = route;
+      loadScript(
+        "./components/navbar/navbar.js",
+        () => {
+          if (
+            typeof Navbar !== "undefined" &&
+            typeof Navbar.init === "function"
+          ) {
+            Navbar.init();
+          }
+        }
+      );
 
-      await this.loadPageAssets(route);
+    } catch (error) {
+
+      console.error(
+        "App: Failed to load navbar.",
+        error
+      );
+
+      navbarContainer.innerHTML = "";
+    }
+  }
+
+  /* -------------------------------------------------------
+     ROUTING
+  ------------------------------------------------------- */
+
+  async function handleRoute() {
+
+    let route =
+      window.location.hash
+        .replace("#", "")
+        .trim()
+        .toLowerCase();
+
+    if (!route) {
+      route = "home";
+
+      if (
+        window.location.hash !== "#home"
+      ) {
+        history.replaceState(
+          null,
+          "",
+          "#home"
+        );
+      }
+    }
+
+    if (!routes[route]) {
+      route = "home";
+    }
+
+    await loadPage(route);
+  }
+
+  /* -------------------------------------------------------
+     LOAD PAGE
+  ------------------------------------------------------- */
+
+  async function loadPage(route) {
+
+    const pagePath = routes[route];
+
+    if (!pagePath) {
+      showError(
+        "Page not found."
+      );
+      return;
+    }
+
+    showLoading();
+
+    try {
+
+      const response = await fetch(
+        pagePath,
+        {
+          cache: "no-cache"
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Page request failed: ${response.status}`
+        );
+      }
+
+      pageContent.innerHTML =
+        await response.text();
+
+      await loadPageStyles(route);
+
+      await loadPageScript(route);
+
+      updateNavbar(route);
 
       window.scrollTo({
         top: 0,
@@ -105,128 +188,210 @@ const App = {
 
     } catch (error) {
 
-      console.error("App: Page loading failed.", error);
+      console.error(
+        `App: Failed to load ${route} page.`,
+        error
+      );
 
-      pageContent.innerHTML = `
-        <section class="app-error">
-          <div class="container">
-            <h1>Something went wrong</h1>
-            <p>
-              We couldn't load this page right now.
-              Please try again.
-            </p>
-
-            <a href="#home">
-              Return Home
-            </a>
-          </div>
-        </section>
-      `;
-
-    } finally {
-
-      pageContent.classList.remove("page-loading");
-
+      showError(
+        "We couldn't load this page right now. Please try again."
+      );
     }
-  },
-
+  }
 
   /* -------------------------------------------------------
-     PAGE ASSETS
+     PAGE STYLES
   ------------------------------------------------------- */
 
-  async loadPageAssets(route) {
+  async function loadPageStyles(route) {
 
-    /*
-      Each page will eventually load its own JavaScript
-      and CSS.
+    const stylesheet =
+      `./pages/${route}/${route}.css`;
 
-      Example:
-
-      Home
-        home.css
-        home.js
-
-      Shop
-        shop.css
-        shop.js
-
-      About
-        about.css
-        about.js
-
-      Contact
-        contact.css
-        contact.js
-
-      We keep this separate so the application does not
-      become one huge JavaScript file.
-    */
-
-    if (route === "home") {
-      await this.loadScript("./pages/home/home.js");
-      return;
+    try {
+      await loadStylesheet(stylesheet);
+    } catch (error) {
+      console.warn(
+        `App: No stylesheet found for ${route}.`,
+        error
+      );
     }
-
-    if (route === "shop") {
-      await this.loadScript("./pages/shop/shop.js");
-      return;
-    }
-
-    if (route === "about") {
-      await this.loadScript("./pages/about/about.js");
-      return;
-    }
-
-    if (route === "contact") {
-      await this.loadScript("./pages/contact/contact.js");
-    }
-  },
-
+  }
 
   /* -------------------------------------------------------
-     SCRIPT LOADER
+     PAGE SCRIPT
   ------------------------------------------------------- */
 
-  loadScript(src) {
+  function loadPageScript(route) {
+
+    const script =
+      pageScripts[route];
+
+    if (!script) {
+      return Promise.resolve();
+    }
+
+    if (loadedScripts.has(script)) {
+      return Promise.resolve();
+    }
 
     return new Promise((resolve, reject) => {
 
-      const existingScript = document.querySelector(
-        `script[data-page-script="${src}"]`
-      );
+      const scriptElement =
+        document.createElement("script");
 
-      if (existingScript) {
+      scriptElement.src = script;
+      scriptElement.async = false;
+
+      scriptElement.onload = () => {
+        loadedScripts.add(script);
+        resolve();
+      };
+
+      scriptElement.onerror = () => {
+        reject(
+          new Error(
+            `Failed to load script: ${script}`
+          )
+        );
+      };
+
+      document.body.appendChild(
+        scriptElement
+      );
+    });
+  }
+
+  /* -------------------------------------------------------
+     STYLESHEET LOADER
+  ------------------------------------------------------- */
+
+  function loadStylesheet(href) {
+
+    return new Promise((resolve, reject) => {
+
+      const existing =
+        document.querySelector(
+          `link[href="${href}"]`
+        );
+
+      if (existing) {
         resolve();
         return;
       }
 
-      const script = document.createElement("script");
+      const link =
+        document.createElement("link");
 
-      script.src = src;
-      script.dataset.pageScript = src;
+      link.rel = "stylesheet";
+      link.href = href;
 
-      script.onload = () => resolve();
+      link.onload = resolve;
 
-      script.onerror = () => {
+      link.onerror = () => {
         reject(
-          new Error(`Unable to load script: ${src}`)
+          new Error(
+            `Failed to load stylesheet: ${href}`
+          )
         );
       };
 
-      document.body.appendChild(script);
-
+      document.head.appendChild(link);
     });
-
   }
 
-};
+  /* -------------------------------------------------------
+     NAVBAR UPDATE
+  ------------------------------------------------------- */
 
+  function updateNavbar(route) {
+
+    if (
+      typeof Navbar !== "undefined" &&
+      typeof Navbar.updateActiveLink === "function"
+    ) {
+      Navbar.updateActiveLink();
+    }
+
+    document.title =
+      getPageTitle(route);
+  }
+
+  /* -------------------------------------------------------
+     PAGE TITLES
+  ------------------------------------------------------- */
+
+  function getPageTitle(route) {
+
+    const titles = {
+      home: "The Golden Loaf Bakery",
+      shop: "Shop | The Golden Loaf Bakery",
+      about: "About Us | The Golden Loaf Bakery",
+      contact: "Contact | The Golden Loaf Bakery"
+    };
+
+    return (
+      titles[route] ||
+      titles.home
+    );
+  }
+
+  /* -------------------------------------------------------
+     LOADING STATE
+  ------------------------------------------------------- */
+
+  function showLoading() {
+
+    pageContent.innerHTML = `
+      <div class="app-loading" aria-live="polite">
+        <div class="app-loading-mark">GL</div>
+        <span>Loading...</span>
+      </div>
+    `;
+  }
+
+  /* -------------------------------------------------------
+     ERROR STATE
+  ------------------------------------------------------- */
+
+  function showError(message) {
+
+    pageContent.innerHTML = `
+      <section class="app-error" role="alert">
+        <div class="app-error-card">
+          <span class="app-error-mark">GL</span>
+
+          <h1>Something went wrong</h1>
+
+          <p>${message}</p>
+
+          <button
+            type="button"
+            onclick="location.reload()"
+          >
+            Try Again
+          </button>
+        </div>
+      </section>
+    `;
+  }
+
+  /* -------------------------------------------------------
+     PUBLIC API
+  ------------------------------------------------------- */
+
+  return {
+    init,
+    handleRoute
+  };
+
+})();
 
 /* =========================================================
-   START
-   ========================================================= */
+   START APPLICATION
+========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
-  App.init();
-});
+document.addEventListener(
+  "DOMContentLoaded",
+  () => App.init()
+);

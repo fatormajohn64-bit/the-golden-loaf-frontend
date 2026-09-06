@@ -1,0 +1,330 @@
+/* =========================================================
+   THE GOLDEN LOAF BAKERY
+   FOOTER
+========================================================= */
+
+.footer {
+  width: 100%;
+  margin-top: 40px;
+
+  background:
+    radial-gradient(
+      circle at 20% 0%,
+      rgba(217, 164, 65, 0.08),
+      transparent 32%
+    ),
+    linear-gradient(
+      180deg,
+      #0d0b09 0%,
+      #070605 100%
+    );
+
+  border-top: 1px solid var(--border-gold);
+
+  color: var(--cream);
+}
+
+.footer-container {
+  width: 100%;
+  max-width: var(--max-width);
+
+  margin: 0 auto;
+  padding: 50px var(--page-padding) 42px;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 38px;
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.footer-brand {
+  max-width: 390px;
+}
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  color: var(--white);
+  text-decoration: none;
+}
+
+.footer-logo-mark {
+  width: 46px;
+  height: 46px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+
+  color: var(--gold-light);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  box-shadow:
+    inset 0 0 18px rgba(217, 164, 65, 0.08),
+    0 0 20px rgba(217, 164, 65, 0.07);
+}
+
+.footer-logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.footer-logo-text strong {
+  color: var(--cream);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.footer-logo-text small {
+  margin-top: 5px;
+
+  color: var(--gold);
+
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.footer-tagline {
+  margin: 20px 0 10px;
+
+  color: var(--gold-light);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 15px;
+  font-style: italic;
+}
+
+.footer-description {
+  max-width: 350px;
+
+  margin: 0;
+
+  color: var(--muted);
+
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* =========================================================
+   FOOTER COLUMNS
+========================================================= */
+
+.footer-column h3 {
+  margin: 0 0 18px;
+
+  color: var(--gold-light);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.footer-links,
+.footer-contact,
+.footer-social {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-links a,
+.footer-contact a,
+.footer-social a {
+  width: fit-content;
+
+  color: var(--muted);
+  text-decoration: none;
+
+  font-size: 13px;
+
+  transition:
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.footer-links a:hover,
+.footer-contact a:hover,
+.footer-social a:hover {
+  color: var(--gold-light);
+  transform: translateX(3px);
+}
+
+/* =========================================================
+   SOCIAL LINKS
+========================================================= */
+
+.footer-social a {
+  position: relative;
+  padding-left: 0;
+}
+
+.footer-social a::before {
+  content: "•";
+
+  margin-right: 8px;
+
+  color: var(--gold);
+}
+
+/* =========================================================
+   BOTTOM BAR
+========================================================= */
+
+.footer-bottom {
+  border-top: 1px solid var(--border-soft);
+}
+
+.footer-bottom-container {
+  width: 100%;
+  max-width: var(--max-width);
+
+  margin: 0 auto;
+  padding: 22px var(--page-padding);
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-bottom p {
+  margin: 0;
+
+  color: #81796f;
+
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.footer-made {
+  color: var(--gold-dark) !important;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (min-width: 600px) {
+
+  .footer-container {
+    grid-template-columns:
+      minmax(220px, 1.5fr)
+      repeat(2, minmax(130px, 1fr));
+
+    gap: 32px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  .footer-bottom-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width: 900px) {
+
+  .footer-container {
+    grid-template-columns:
+      1.7fr
+      1fr
+      1fr
+      1fr;
+
+    padding-top: 64px;
+    padding-bottom: 54px;
+
+    gap: 50px;
+  }
+
+  .footer-brand {
+    grid-column: auto;
+  }
+
+  .footer-logo-mark {
+    width: 50px;
+    height: 50px;
+  }
+
+  .footer-logo-text strong {
+    font-size: 19px;
+  }
+
+  .footer-description {
+    font-size: 14px;
+  }
+
+  .footer-bottom-container {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+}
+
+/* =========================================================
+   LARGE SCREENS
+========================================================= */
+
+@media (min-width: 1200px) {
+
+  .footer-container {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  .footer-bottom-container {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .footer *,
+  .footer *::before,
+  .footer *::after {
+    transition: none !important;
+  }
+}

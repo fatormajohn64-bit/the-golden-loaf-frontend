@@ -1,1 +1,418 @@
+/* =========================================================
+   THE GOLDEN LOAF BAKERY
+   NAVBAR
+========================================================= */
 
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+
+  width: 100%;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(7, 6, 5, 0.98),
+      rgba(7, 6, 5, 0.92)
+    );
+
+  border-bottom: 1px solid var(--border-gold);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+.navbar-container {
+  width: 100%;
+  max-width: var(--max-width);
+  min-height: 72px;
+
+  margin: 0 auto;
+  padding: 0 var(--page-padding);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  color: var(--white);
+  text-decoration: none;
+
+  flex-shrink: 0;
+}
+
+.navbar-brand-mark {
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+
+  color: var(--gold-light);
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  box-shadow:
+    inset 0 0 15px rgba(217, 164, 65, 0.08),
+    0 0 18px rgba(217, 164, 65, 0.08);
+}
+
+.navbar-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.navbar-brand-text strong {
+  color: var(--cream);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.navbar-brand-text small {
+  margin-top: 4px;
+
+  color: var(--gold);
+
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.navbar-nav {
+  display: none;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-link {
+  position: relative;
+
+  padding: 8px 0;
+
+  color: var(--muted);
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  transition:
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.nav-link::after {
+  content: "";
+
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+
+  width: 0;
+  height: 1px;
+
+  background: var(--gold);
+
+  transform: translateX(-50%);
+
+  transition: width var(--transition-normal);
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--gold-light);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-cart {
+  position: relative;
+
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+  place-items: center;
+
+  color: var(--cream);
+  text-decoration: none;
+
+  border: 1px solid var(--border-soft);
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.025);
+
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.navbar-cart:hover {
+  border-color: var(--border-gold);
+  background: rgba(217, 164, 65, 0.07);
+  transform: translateY(-1px);
+}
+
+.cart-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.cart-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+
+  min-width: 17px;
+  height: 17px;
+
+  padding: 0 4px;
+
+  display: grid;
+  place-items: center;
+
+  border: 2px solid var(--black);
+  border-radius: 50%;
+
+  background: var(--gold);
+  color: var(--black);
+
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* =========================================================
+   MOBILE MENU BUTTON
+========================================================= */
+
+.navbar-toggle {
+  width: 40px;
+  height: 40px;
+
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  border: 1px solid var(--border-soft);
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.025);
+
+  cursor: pointer;
+}
+
+.navbar-toggle span {
+  width: 17px;
+  height: 1.5px;
+
+  display: block;
+
+  background: var(--cream);
+
+  transition:
+    transform var(--transition-normal),
+    opacity var(--transition-normal);
+}
+
+.navbar-toggle:hover {
+  border-color: var(--border-gold);
+}
+
+.navbar-toggle[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+
+.navbar-toggle[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+
+.navbar-toggle[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+}
+
+/* =========================================================
+   MOBILE NAVIGATION
+========================================================= */
+
+@media (max-width: 767px) {
+  .navbar-nav {
+    position: absolute;
+
+    top: calc(100% + 1px);
+    left: 0;
+    right: 0;
+
+    padding: 12px var(--page-padding) 20px;
+
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(13, 11, 9, 0.99),
+        rgba(7, 6, 5, 0.99)
+      );
+
+    border-bottom: 1px solid var(--border-gold);
+
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.45);
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+
+    transition:
+      opacity var(--transition-normal),
+      transform var(--transition-normal),
+      visibility var(--transition-normal);
+  }
+
+  .navbar-nav.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .nav-link {
+    padding: 13px 4px;
+
+    border-bottom: 1px solid var(--border-soft);
+
+    font-size: 14px;
+  }
+
+  .nav-link:last-child {
+    border-bottom: 0;
+  }
+
+  .nav-link::after {
+    left: 0;
+    bottom: 0;
+
+    transform: none;
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 35px;
+  }
+}
+
+/* =========================================================
+   TABLET / DESKTOP
+========================================================= */
+
+@media (min-width: 768px) {
+  .navbar-container {
+    min-height: 78px;
+  }
+
+  .navbar-nav {
+    display: flex;
+  }
+
+  .navbar-toggle {
+    display: none;
+  }
+
+  .navbar-brand-mark {
+    width: 42px;
+    height: 42px;
+  }
+
+  .navbar-brand-text strong {
+    font-size: 16px;
+  }
+
+  .navbar-actions {
+    min-width: 72px;
+    justify-content: flex-end;
+  }
+}
+
+/* =========================================================
+   LARGE SCREENS
+========================================================= */
+
+@media (min-width: 1100px) {
+  .navbar-nav {
+    gap: 42px;
+  }
+
+  .navbar-brand {
+    gap: 12px;
+  }
+
+  .navbar-container {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar *,
+  .navbar *::before,
+  .navbar *::after {
+    transition: none !important;
+  }
+}

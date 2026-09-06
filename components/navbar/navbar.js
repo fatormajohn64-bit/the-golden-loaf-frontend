@@ -8,22 +8,27 @@
 const Navbar = (() => {
 
   let navbar = null;
-  let toggleButton = null;
-  let navMenu = null;
+  let navLinks = [];
 
   /* -------------------------------------------------------
      INITIALIZE
   ------------------------------------------------------- */
 
   function init() {
-    navbar = document.getElementById("main-navbar");
-    toggleButton = document.getElementById("navbar-toggle");
-    navMenu = document.getElementById("navbar-nav");
 
-    if (!navbar || !toggleButton || !navMenu) {
-      console.warn("Navbar: required elements were not found.");
+    navbar =
+      document.getElementById("main-navbar");
+
+    if (!navbar) {
+      console.warn(
+        "Navbar: #main-navbar was not found."
+      );
       return;
     }
+
+    navLinks = [
+      ...navbar.querySelectorAll(".nav-link")
+    ];
 
     bindEvents();
     updateActiveLink();
@@ -35,108 +40,77 @@ const Navbar = (() => {
 
   function bindEvents() {
 
-    toggleButton.addEventListener("click", toggleMenu);
+    /*
+     * Update active navigation when
+     * the URL hash changes.
+     */
 
-    navMenu.addEventListener("click", handleNavigation);
+    window.addEventListener(
+      "hashchange",
+      updateActiveLink
+    );
 
-    window.addEventListener("hashchange", () => {
-      updateActiveLink();
-      closeMenu();
+    /*
+     * Close/update state immediately
+     * when a navigation link is clicked.
+     */
+
+    navLinks.forEach((link) => {
+
+      link.addEventListener(
+        "click",
+        handleNavigation
+      );
+
     });
-
-    document.addEventListener("click", handleOutsideClick);
-
-    document.addEventListener("keydown", handleKeyboard);
-  }
-
-  /* -------------------------------------------------------
-     MOBILE MENU
-  ------------------------------------------------------- */
-
-  function toggleMenu(event) {
-    event.stopPropagation();
-
-    const isOpen =
-      toggleButton.getAttribute("aria-expanded") === "true";
-
-    if (isOpen) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
-  }
-
-  function openMenu() {
-    navMenu.classList.add("is-open");
-
-    toggleButton.setAttribute(
-      "aria-expanded",
-      "true"
-    );
-
-    toggleButton.setAttribute(
-      "aria-label",
-      "Close navigation menu"
-    );
-  }
-
-  function closeMenu() {
-    if (!navMenu || !toggleButton) {
-      return;
-    }
-
-    navMenu.classList.remove("is-open");
-
-    toggleButton.setAttribute(
-      "aria-expanded",
-      "false"
-    );
-
-    toggleButton.setAttribute(
-      "aria-label",
-      "Open navigation menu"
-    );
   }
 
   /* -------------------------------------------------------
      NAVIGATION
   ------------------------------------------------------- */
 
-  function handleNavigation(event) {
+  function handleNavigation() {
 
-    const link = event.target.closest(".nav-link");
+    /*
+     * Give the browser a moment to update
+     * the hash before checking the route.
+     */
 
-    if (!link) {
-      return;
-    }
-
-    closeMenu();
+    requestAnimationFrame(() => {
+      updateActiveLink();
+    });
   }
 
   /* -------------------------------------------------------
-     ACTIVE PAGE
+     ACTIVE LINK
   ------------------------------------------------------- */
 
   function updateActiveLink() {
 
-    if (!navMenu) {
+    if (!navbar) {
       return;
     }
 
     let currentRoute =
-      window.location.hash.replace("#", "").trim();
+      window.location.hash
+        .replace("#", "")
+        .trim()
+        .toLowerCase();
+
+    /*
+     * Default route.
+     */
 
     if (!currentRoute) {
       currentRoute = "home";
     }
 
-    const links =
-      navMenu.querySelectorAll(".nav-link");
-
-    links.forEach((link) => {
+    navLinks.forEach((link) => {
 
       const route =
-        link.dataset.route;
+        (link.dataset.route || "")
+          .trim()
+          .toLowerCase();
 
       const isActive =
         route === currentRoute;
@@ -147,11 +121,14 @@ const Navbar = (() => {
       );
 
       if (isActive) {
+
         link.setAttribute(
           "aria-current",
           "page"
         );
+
       } else {
+
         link.removeAttribute(
           "aria-current"
         );
@@ -160,43 +137,15 @@ const Navbar = (() => {
   }
 
   /* -------------------------------------------------------
-     OUTSIDE CLICK
-  ------------------------------------------------------- */
-
-  function handleOutsideClick(event) {
-
-    if (!navMenu.classList.contains("is-open")) {
-      return;
-    }
-
-    const clickedInsideNavbar =
-      navbar.contains(event.target);
-
-    if (!clickedInsideNavbar) {
-      closeMenu();
-    }
-  }
-
-  /* -------------------------------------------------------
-     KEYBOARD
-  ------------------------------------------------------- */
-
-  function handleKeyboard(event) {
-
-    if (event.key === "Escape") {
-      closeMenu();
-    }
-  }
-
-  /* -------------------------------------------------------
      PUBLIC API
   ------------------------------------------------------- */
 
   return {
+
     init,
-    openMenu,
-    closeMenu,
+
     updateActiveLink
+
   };
 
 })();

@@ -1,6 +1,6 @@
 /* =========================================================
    THE GOLDEN LOAF BAKERY
-   NAVBAR — REFERENCE DESIGN
+   NAVBAR — GOLDEN LOAF REFERENCE
 ========================================================= */
 
 .navbar {
@@ -9,46 +9,59 @@
   left: 0;
   right: 0;
 
+  width: 100%;
+  height: 92px;
+
   z-index: 1000;
 
-  width: 100%;
+  background: rgba(0, 0, 0, 0.58);
 
-  background: rgba(0, 0, 0, 0.48);
+  border-bottom: 1px solid
+    rgba(217, 164, 65, 0.12);
 
-  border-bottom: 1px solid rgba(217, 164, 65, 0.08);
-
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
+
+
+/* =========================================================
+   NAVBAR CONTAINER
+========================================================= */
 
 .navbar-container {
   width: 100%;
   max-width: 1500px;
 
-  min-height: 82px;
+  height: 92px;
 
   margin: 0 auto;
-  padding: 0 54px;
+
+  padding: 0 52px;
 
   display: flex;
   align-items: center;
+
   justify-content: space-between;
 }
 
 
 /* =========================================================
-   LOGO
+   LOGO / BRAND
 ========================================================= */
 
 .navbar-brand {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
 
   width: 190px;
+  height: 92px;
+
+  flex-shrink: 0;
 
   text-decoration: none;
 
-  flex-shrink: 0;
+  overflow: visible;
 }
 
 .navbar-logo {
@@ -57,10 +70,16 @@
   width: 178px;
   height: auto;
 
+  max-height: 88px;
+
   object-fit: contain;
 
+  object-position: center;
+
   filter:
-    drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55));
+    drop-shadow(
+      0 5px 12px rgba(0, 0, 0, 0.65)
+    );
 }
 
 
@@ -71,25 +90,29 @@
 .navbar-nav {
   display: flex;
   align-items: center;
-  justify-content: center;
+
+  justify-content: flex-end;
 
   gap: 48px;
 
   margin-left: auto;
-  margin-right: 110px;
+
+  height: 92px;
 }
+
 
 .nav-link {
   position: relative;
 
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
 
-  height: 82px;
+  height: 92px;
 
   padding: 0;
 
-  color: #f7f1e7;
+  color: #ffffff;
 
   text-decoration: none;
 
@@ -99,9 +122,12 @@
     sans-serif;
 
   font-size: 14px;
+
   font-weight: 500;
 
   letter-spacing: 0.2px;
+
+  white-space: nowrap;
 
   transition:
     color 180ms ease;
@@ -109,7 +135,7 @@
 
 
 /* =========================================================
-   GOLD ACTIVE LINE
+   ACTIVE GOLD UNDERLINE
 ========================================================= */
 
 .nav-link::after {
@@ -117,35 +143,37 @@
 
   position: absolute;
 
-  left: 0;
-  right: 0;
-  bottom: 14px;
+  left: 50%;
+  bottom: 17px;
 
   width: 0;
   height: 2px;
 
-  margin: auto;
+  transform: translateX(-50%);
 
-  background: var(--gold-light);
+  background: #e8b84b;
 
   box-shadow:
-    0 0 8px rgba(217, 164, 65, 0.25);
+    0 0 8px rgba(232, 184, 75, 0.35);
 
   transition:
     width 220ms ease;
 }
 
+
 .nav-link:hover {
-  color: var(--gold-light);
+  color: #e8b84b;
 }
+
 
 .nav-link:hover::after,
 .nav-link.active::after {
   width: 100%;
 }
 
+
 .nav-link.active {
-  color: var(--gold-light);
+  color: #e8b84b;
 }
 
 
@@ -156,49 +184,59 @@
 @media (max-width: 767px) {
 
   .navbar {
+    height: 74px;
+
     background:
       linear-gradient(
         180deg,
-        rgba(0, 0, 0, 0.78),
-        rgba(0, 0, 0, 0.35)
+        rgba(0, 0, 0, 0.86),
+        rgba(0, 0, 0, 0.58)
       );
-
-    border-bottom: 0;
   }
+
 
   .navbar-container {
-    min-height: 70px;
+    height: 74px;
 
     padding:
-      0 18px;
+      0 16px;
   }
+
 
   .navbar-brand {
-    width: 135px;
+    width: 125px;
+    height: 74px;
   }
+
 
   .navbar-logo {
-    width: 132px;
+    width: 122px;
+    max-height: 70px;
   }
+
 
   .navbar-nav {
-    gap: 18px;
+    height: 74px;
+
+    gap: 19px;
 
     margin-left: auto;
-    margin-right: 0;
   }
 
-  .nav-link {
-    height: 70px;
 
-    font-size: 11px;
+  .nav-link {
+    height: 74px;
+
+    font-size: 10px;
 
     letter-spacing: 0;
   }
 
+
   .nav-link::after {
     bottom: 10px;
-    height: 1.5px;
+
+    height: 2px;
   }
 }
 
@@ -209,24 +247,46 @@
 
 @media (max-width: 480px) {
 
-  .navbar-container {
-    padding: 0 12px;
+  .navbar {
+    height: 68px;
   }
+
+
+  .navbar-container {
+    height: 68px;
+
+    padding: 0 11px;
+  }
+
 
   .navbar-brand {
-    width: 110px;
+    width: 105px;
+    height: 68px;
   }
+
 
   .navbar-logo {
-    width: 108px;
+    width: 103px;
+    max-height: 64px;
   }
+
 
   .navbar-nav {
-    gap: 12px;
+    height: 68px;
+
+    gap: 13px;
   }
 
+
   .nav-link {
+    height: 68px;
+
     font-size: 9px;
+  }
+
+
+  .nav-link::after {
+    bottom: 8px;
   }
 }
 
@@ -237,17 +297,25 @@
 
 @media (max-width: 360px) {
 
-  .navbar-brand {
-    width: 95px;
+  .navbar-container {
+    padding: 0 8px;
   }
 
-  .navbar-logo {
-    width: 94px;
+
+  .navbar-brand {
+    width: 92px;
   }
+
+
+  .navbar-logo {
+    width: 90px;
+  }
+
 
   .navbar-nav {
     gap: 9px;
   }
+
 
   .nav-link {
     font-size: 8px;
@@ -261,25 +329,46 @@
 
 @media (min-width: 768px) and (max-width: 1100px) {
 
+  .navbar {
+    height: 82px;
+  }
+
+
   .navbar-container {
+    height: 82px;
+
     padding: 0 30px;
   }
 
+
   .navbar-brand {
-    width: 150px;
+    width: 155px;
+    height: 82px;
   }
+
 
   .navbar-logo {
-    width: 145px;
+    width: 150px;
+    max-height: 78px;
   }
+
 
   .navbar-nav {
-    gap: 28px;
-    margin-right: 30px;
+    height: 82px;
+
+    gap: 29px;
   }
 
+
   .nav-link {
+    height: 82px;
+
     font-size: 12px;
+  }
+
+
+  .nav-link::after {
+    bottom: 13px;
   }
 }
 
@@ -290,35 +379,59 @@
 
 @media (min-width: 1400px) {
 
-  .navbar-container {
-    min-height: 90px;
-
-    padding-left: 65px;
-    padding-right: 65px;
+  .navbar {
+    height: 96px;
   }
+
+
+  .navbar-container {
+    height: 96px;
+
+    padding:
+      0 62px;
+  }
+
 
   .navbar-brand {
     width: 205px;
+    height: 96px;
   }
+
 
   .navbar-logo {
-    width: 195px;
+    width: 194px;
+    max-height: 92px;
   }
+
 
   .navbar-nav {
+    height: 96px;
+
     gap: 52px;
-    margin-right: 120px;
   }
 
+
   .nav-link {
-    height: 90px;
+    height: 96px;
 
     font-size: 15px;
   }
 
+
   .nav-link::after {
-    bottom: 16px;
+    bottom: 17px;
   }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+.nav-link:focus-visible,
+.navbar-brand:focus-visible {
+  outline: 2px solid #e8b84b;
+  outline-offset: 5px;
 }
 
 

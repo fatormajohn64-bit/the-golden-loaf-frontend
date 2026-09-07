@@ -1,68 +1,17 @@
-/* =========================================================
-   THE GOLDEN LOAF BAKERY
-   GLOBAL CONFIGURATION
-   ========================================================= */
-
-"use strict";
-
 const CONFIG = {
-
-  /* -------------------------------------------------------
-     BRAND
-  ------------------------------------------------------- */
-
   APP_NAME: "The Golden Loaf Bakery",
-
   TAGLINE: "Freshly Baked. Made With Care.",
-
-
-  /* -------------------------------------------------------
-     CONTACT
-     Change these values only when the business information
-     changes.
-  ------------------------------------------------------- */
-
-  EMAIL: "",
-
+  OWNER_NAME: "",
   PHONE_NUMBER: "",
-
   WHATSAPP_NUMBER: "",
-
-
-  /* -------------------------------------------------------
-     SOCIAL MEDIA
-  ------------------------------------------------------- */
-
+  EMAIL: "",
   FACEBOOK_URL: "",
-
   INSTAGRAM_URL: "",
-
   TIKTOK_URL: "",
-
-
-  /* -------------------------------------------------------
-     BUSINESS INFORMATION
-  ------------------------------------------------------- */
-
   ADDRESS: "",
-
   OPENING_HOURS: "",
-
-
-  /* -------------------------------------------------------
-     BACKEND
-     We will add the real API URL when the backend is built.
-  ------------------------------------------------------- */
-
-  API_URL: "",
-
-
-  /* -------------------------------------------------------
-     CURRENCY
-  ------------------------------------------------------- */
-
+  LOGO: "./assets/images/golden-loaf-logo.png",
+  API_URL: "http://localhost:5000",
   CURRENCY: "Le",
-
   CURRENCY_CODE: "SLE"
-
 };
